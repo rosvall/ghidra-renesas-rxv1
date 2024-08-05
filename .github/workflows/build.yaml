@@ -39,19 +39,15 @@ jobs:
       uses: eskatos/gradle-command-action@v1
       with:
         gradle-version: '7.3'
-        build-root-directory: ${{ github.workspace }}/..
-        arguments: '-PGHIDRA_INSTALL_DIR=${{ github.workspace }}/${{ env.ghidra-directory }}  --info'
+        build-root-directory: ${{ github.workspace }}/rx
+        arguments: '-PGHIDRA_INSTALL_DIR=${{ github.workspace }}/${{ env.ghidra-directory }}'
 
     - name: Upload built extension
       uses: actions/upload-artifact@v2
       with:
         name: extension
-        path: dist/*.zip
+        path: rx/dist/*.zip
 
-    - name: Debug List directory contents
-      run: |
-        echo "Listing build directory contents:"
-        ls -R ${{ github.workspace }}
   release:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'release' }}
