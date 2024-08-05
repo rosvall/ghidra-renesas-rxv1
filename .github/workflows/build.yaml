@@ -46,8 +46,12 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: extension
-        path: rx-proc-ghidra/dist/*.zip
+        path: dist/*.zip
 
+    - name: Debug: List directory contents
+      run: |
+        echo "Listing build directory contents:"
+        ls -R ${{ github.workspace }}
   release:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'release' }}
