@@ -48,7 +48,7 @@ jobs:
         name: extension
         path: dist/*.zip
 
-    - name: Debug: List directory contents
+    - name: Debug List directory contents
       run: |
         echo "Listing build directory contents:"
         ls -R ${{ github.workspace }}
