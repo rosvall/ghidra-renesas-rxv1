@@ -40,7 +40,7 @@ jobs:
       with:
         gradle-version: '7.3'
         build-root-directory: ${{ github.workspace }}
-        arguments: '-PGHIDRA_INSTALL_DIR=${{ github.workspace }}/${{ env.ghidra-directory }}'
+        arguments: '-PGHIDRA_INSTALL_DIR=${{ github.workspace }}/${{ env.ghidra-directory }}  --info'
 
     - name: Upload built extension
       uses: actions/upload-artifact@v2
