@@ -923,23 +923,15 @@ popregs: is popr15 & popr14 & popr13 & popr12 & popr11 & popr10 & popr9 & popr8 
 # DIVU
 ## DIVU #SIMM, Rd
 :DIVU liop, reg0_4    is op0_8 = 0xFD; op4_4 = 0x7 & li2_2 & op0_2 = 0b00; op4_4 = 0x9 & reg0_4; liop [ mode_li = li2_2; ] {
-	if (liop == 0) goto <overflow>;
-		reg0_4 = reg0_4 / liop;
-		goto <end>;
-	<overflow>
-		$(O_flag) = 1;
-	<end>
+	reg0_4 = reg0_4 / liop;
+	$(O_flag) = liop == 0;
 }
 
 ## DIVU dsp[Rs].memex, Rd
 ## when memex == UB or src == Rs
 :DIVU ld_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b1001 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] {
-	if (ld_src == 0) goto <overflow>;
-		reg0_4 = reg0_4 / ld_src;
-		goto <end>;
-	<overflow>
-		$(O_flag) = 1;
-	<end>
+	reg0_4 = reg0_4 / ld_src;
+	$(O_flag) = ld_src == 0;
 }
 
 ## when memex != UB
@@ -1907,18 +1899,9 @@ popregs: is popr15 & popr14 & popr13 & popr12 & popr11 & popr10 & popr9 & popr8 
 
     # O flag is cleared if shift does not change sign (i.e. shifted out bits and result MSB are all the same)
     # "when scr [sic] is 0, this flag is also cleared" - Assuming this is a typo of src
-    if (shift == 0) goto <unseto>;
-    local tmp:4 = original >> (32 - shift - 1);
-    if (tmp == 0) goto <unseto>;
-    if (tmp == ((1 << shift) - 1)) goto <unseto>;
-    goto <seto>;
 
-    <unseto>
-    $(O_flag) = 0;
-    goto <end>;
-    <seto>
-    $(O_flag) = 1;
-    <end>
+    local tmp:4 = original >> (32 - shift - 1);
+    $(O_flag) = (shift != 0) && (tmp != 0) && (tmp != ((1 << shift) - 1));
 }
 
 ### (2) SHLL Rs, Rd
@@ -1931,18 +1914,9 @@ popregs: is popr15 & popr14 & popr13 & popr12 & popr11 & popr10 & popr9 & popr8 
     setResultFlags(reg0_4);
 
     # "when scr [sic] is 0, this flag is also cleared" - Assuming this is a typo of src
-    if (shift == 0) goto <unseto>;
-    local tmp:4 = original >> (32 - shift - 1);
-    if (tmp == 0) goto <unseto>;
-    if (tmp == ((1 << shift) - 1)) goto <unseto>;
-    goto <seto>;
 
-    <unseto>
-    $(O_flag) = 0;
-    goto <end>;
-    <seto>
-    $(O_flag) = 1;
-    <end>
+    local tmp:4 = original >> (32 - shift - 1);
+    $(O_flag) = (shift != 0) && (tmp != 0) && (tmp != ((1 << shift) - 1));
 }
 
 ### (3) SHLL #IMM:5, Rs, Rd
@@ -1955,18 +1929,8 @@ popregs: is popr15 & popr14 & popr13 & popr12 & popr11 & popr10 & popr9 & popr8 
     setResultFlags(reg0_4);
 
     # "when scr [sic] is 0, this flag is also cleared" - Assuming this is a typo of src
-    if (shift == 0) goto <unseto>;
     local tmp:4 = original >> (32 - shift - 1);
-    if (tmp == 0) goto <unseto>;
-    if (tmp == ((1 << shift) - 1)) goto <unseto>;
-    goto <seto>;
-
-    <unseto>
-    $(O_flag) = 0;
-    goto <end>;
-    <seto>
-    $(O_flag) = 1;
-    <end>
+    $(O_flag) = (shift != 0) && (tmp != 0) && (tmp != ((1 << shift) - 1));
 }
 
 
