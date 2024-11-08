@@ -525,7 +525,15 @@ popregs: is popr15 & popr14 & popr13 & popr12 & popr11 & popr10 & popr9 & popr8 
 	setResultFlags(reg0_4);
 }
 
-## ADD src,dst when memex == UB or src == Rs
+## ADD src,dst when src == Rs
+:ADD reg4_4, reg0_4 is op2_6 = 0b10010 & ld0_2 = 0b11; reg0_4 & reg4_4 {
+	setAddFlags(reg4_4, reg0_4);
+	setAddOverflowFlags(reg4_4, reg0_4);
+	reg0_4 = reg0_4 + reg4_4;
+	setResultFlags(reg0_4);
+}
+
+## ADD src,dst when memex == UB
 :ADD ld_src, reg0_4 is op2_6 = 0b10010 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 0x4; ] {
 	setAddFlags(ld_src, reg0_4);
 	setAddOverflowFlags(ld_src, reg0_4);
@@ -583,7 +591,7 @@ popregs: is popr15 & popr14 & popr13 & popr12 & popr11 & popr10 & popr9 & popr8 
 	setResultFlags(reg0_4);
 }
 
-## AND src,dst where memex == UB or src == Rs
+## AND src,dst where memex == UB 
 :AND ld_src, reg0_4 is op2_6 = 0b10100 & ld0_2; reg0_4 ... & ld_src [ mode_mi = 4; mode_ld = ld0_2; ] {
 	reg0_4 = reg0_4 & ld_src;
 	setResultFlags(reg0_4);
@@ -869,7 +877,7 @@ popregs: is popr15 & popr14 & popr13 & popr12 & popr11 & popr10 & popr9 & popr8 
 	setResultFlags(tmp);
 }
 ## CMP dsp[Rs].memex, Rs2
-## memex = UB or src == Rs
+## memex = UB
 :CMP ld_src, reg0_4    is op2_6 = 0b10001 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] {
     build ld_src;
 	setSubtractFlags(reg0_4, ld_src);
@@ -898,8 +906,18 @@ popregs: is popr15 & popr14 & popr13 & popr12 & popr11 & popr10 & popr9 & popr8 
 	<end>
 }
 
+## DIV Rs, Rd
+:DIV reg4_4, reg0_4    is op0_8 = 0xFC; op2_6 = 0b001000 & ld0_2 = 0b11; reg0_4 & reg4_4 {
+	if (reg4_4 == 0 || (reg4_4 == -2147483648 && reg0_4 == -1)) goto <overflow>;
+		reg0_4 = reg0_4 s/ reg4_4;
+		goto <end>;
+	<overflow>
+		$(O_flag) = 1;
+	<end>
+}
+
 ## DIV dsp[Rs].memex, Rd
-## when memex == UB or src == Rs
+## when memex == UB
 :DIV ld_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b1000 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] {
 	if (ld_src == 0 || (ld_src == -2147483648 && reg0_4 == -1)) goto <overflow>;
 		reg0_4 = reg0_4 s/ ld_src;
@@ -927,8 +945,14 @@ popregs: is popr15 & popr14 & popr13 & popr12 & popr11 & popr10 & popr9 & popr8 
 	$(O_flag) = liop == 0;
 }
 
+## DIVU Rs, Rd
+:DIVU reg4_4, reg0_4    is op0_8 = 0xFC; op2_6 = 0b1001 & ld0_2 = 0b11; reg0_4 & reg4_4 {
+	reg0_4 = reg0_4 / reg4_4;
+	$(O_flag) = reg4_4 == 0;
+}
+
 ## DIVU dsp[Rs].memex, Rd
-## when memex == UB or src == Rs
+## when memex == UB
 :DIVU ld_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b1001 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] {
 	reg0_4 = reg0_4 / ld_src;
 	$(O_flag) = ld_src == 0;
@@ -1422,13 +1446,18 @@ popregs: is popr15 & popr14 & popr13 & popr12 & popr11 & popr10 & popr9 & popr8 
 }
 
 ### (2) MUL #SIMM, Rd
-:MUL liop, reg0_4    is op2_6 = 0b11101 & li0_2; op4_4 = 0x1 & reg0_4; liop [ mode_li = li0_2; ] {
+:MUL liop, reg0_4    is op2_6 = 0b011101 & li0_2; op4_4 = 0x1 & reg0_4; liop [ mode_li = li0_2; ] {
     reg0_4 = reg0_4 * liop;
 }
 
+### (3) MUL Rs, Rd
+:MUL reg4_4, reg0_4    is op2_6 = 0b010011 & ld0_2 = 0b11; reg0_4 & reg4_4 {
+    reg0_4 = reg0_4 * reg4_4;
+}
+
 ### (3) MUL dsp[Rs], Rd
-### when memex == UB or src == Rs
-:MUL ld_src, reg0_4    is op2_6 = 0b10011 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] {
+### when memex == UB 
+:MUL ld_src, reg0_4    is op2_6 = 0b010011 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] {
     reg0_4 = reg0_4 * ld_src;
 }
 
@@ -1549,7 +1578,7 @@ popregs: is popr15 & popr14 & popr13 & popr12 & popr11 & popr10 & popr9 & popr8 
 }
 
 ### (3) OR dsp[Rs], Rd
-#### when memex == UB or src == Rs
+#### when memex == UB 
 :OR ld_src, reg0_4    is op2_6 = 0b10101 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] {
     reg0_4 = reg0_4 | ld_src;
     setResultFlags(reg0_4);
@@ -2102,7 +2131,7 @@ popregs: is popr15 & popr14 & popr13 & popr12 & popr11 & popr10 & popr9 & popr8 
 }
 
 ### (2) SUB dsp[Rs].memex, Rd
-### when memex == UB or src == Rs
+### when memex == UB 
 :SUB ld_src, reg0_4    is op2_6 = 0b10000 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] {
     setSubtractOverflowFlags(reg0_4, ld_src);
     setSubtractFlags(reg0_4, ld_src);
