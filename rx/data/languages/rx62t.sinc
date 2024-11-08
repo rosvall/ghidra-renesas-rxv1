@@ -982,7 +982,7 @@ popregs: is popr15 & popr14 & popr13 & popr12 & popr11 & popr10 & popr9 & popr8 
 }
 
 ## EMUL dsp[Rs].memex, Rd
-## when memex == UB or src == Rs
+## when memex == UB or src == Rs #FIXME
 :EMUL ld_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b110 & ld0_2; (op0_4 < 15 & reg0_4 & nextreg) ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] {
 	local tmp:8;
 	tmp = sext(ld_src) * sext(reg0_4);
@@ -1013,7 +1013,7 @@ popregs: is popr15 & popr14 & popr13 & popr12 & popr11 & popr10 & popr9 & popr8 
 }
 
 ## EMULU dsp[Rs].memex, Rd
-## when memex == UB or src == Rs
+## when memex == UB or src == Rs #FIXME
 :EMULU ld_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b111 & ld0_2; (op0_4 < 15 & reg0_4 & nextreg) ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] {
 	local tmp:8;
 	tmp = zext(ld_src) * zext(reg0_4);
@@ -1175,7 +1175,7 @@ popregs: is popr15 & popr14 & popr13 & popr12 & popr11 & popr10 & popr9 & popr8 
 
 # ITOF
 ## ITOF dsp[Rs], Rd
-## when memex == UB or src == Rs
+## when memex == UB or src == Rs #FIXME
 :ITOF ld_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b10001 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] {
     # TODO: Use RM bits of FPSW for rounding mode
     # TODO: FPSW flags
@@ -1218,7 +1218,7 @@ popregs: is popr15 & popr14 & popr13 & popr12 & popr11 & popr10 & popr9 & popr8 
 }
 
 ## MAX dsp[Rs], Rd
-## when memex == UB or src == Rs
+## when memex == UB or src == Rs #FIXME
 :MAX ld_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b100 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] {
 	if (ld_src > reg0_4) goto <skip>;
 		reg0_4 = ld_src;
@@ -1242,7 +1242,7 @@ popregs: is popr15 & popr14 & popr13 & popr12 & popr11 & popr10 & popr9 & popr8 
 }
 
 ## MIN dsp[Rs], Rd
-## when memex == UB or src == Rs
+## when memex == UB or src == Rs #FIXME
 :MIN ld_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b101 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] {
 	if (ld_src > reg0_4) goto <skip>;
 		reg0_4 = ld_src;
@@ -2300,7 +2300,7 @@ popregs: is popr15 & popr14 & popr13 & popr12 & popr11 & popr10 & popr9 & popr8 
 }
 
 ### (2) TST dsp[Rs].memex, Rs2
-### when memex = UB or src == Rs
+### when memex = UB or src == Rs #FIXME
 :TST ld_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b1100 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] {
     local tmp = ld_src & reg0_4;
     setResultFlags(tmp);
@@ -2314,7 +2314,7 @@ popregs: is popr15 & popr14 & popr13 & popr12 & popr11 & popr10 & popr9 & popr8 
 
 
 ### UTOF - integer to float p. 201
-### when memex == UB or src == Rs
+### when memex == UB or src == Rs #FIXME
 :UTOF ldu_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b10101 & ld0_2; reg0_4 ... & ldu_src [ mode_ld = ld0_2; mode_mi = 4; ] {
     # TODO: FPSW
     reg0_4 = int2float(ldu_src);
@@ -2337,7 +2337,7 @@ popregs: is popr15 & popr14 & popr13 & popr12 & popr11 & popr10 & popr9 & popr8 
 
 
 ## XCHG - exchange values p. 204
-### when memex == UB or src == Rs
+### when memex == UB or src == Rs #FIXME
 #### XCHG Rs, Rd
 :XCHG reg4_4, reg0_4    is op0_8 = 0xFC; op2_6 = 0b10000 & ld0_2 = 0b11; reg4_4 & reg0_4 {
     local tmp:4 = reg4_4;
@@ -2361,7 +2361,7 @@ popregs: is popr15 & popr14 & popr13 & popr12 & popr11 & popr10 & popr9 & popr8 
 }
 
 ### (2) XOR dsp[Rs].memex, Rd
-### when memex == UB or src == Rs
+### when memex == UB or src == Rs #FIXME
 :XOR ld_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b1101 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] {
     build ld_src;
     reg0_4 = reg0_4 ^ ld_src;
