@@ -1816,8 +1816,8 @@ popregs: is popr15 & popr14 & popr13 & popr12 & popr11 & popr10 & popr9 & popr8 
 
 ## SCCnd - condition setting
 ### (1.1) SCCnd.L Rd
-:SC^COND^szdsc szld_dst    is szdsc & op0_8 = 0xFC; op4_4 = 0xD & sz2_2 = 0b10 & sz2_2 & ld0_2 = 0b11 & ld0_2; (op0_4 & COND & cc) ... & szld_dst [ mode_ld = ld0_2; mode_sz = sz2_2; cc_val = op0_4; ] {
-    *:4 szld_dst = zext(cc);
+:SC^COND^szdsc reg4_4    is szdsc & op0_8 = 0xFC; op4_4 = 0xD & sz2_2 = 0b10 & sz2_2 & ld0_2 = 0b11 & ld0_2; (op0_4 & COND & cc) & reg4_4 [ mode_ld = ld0_2; mode_sz = sz2_2; cc_val = op0_4; ] {
+    reg4_4 = zext(cc);
 }
 
 ### (1.2) SCCnd.B/W/L dsp[Rd]
